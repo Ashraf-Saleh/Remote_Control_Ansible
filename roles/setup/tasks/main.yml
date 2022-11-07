@@ -3,11 +3,13 @@
   become: true
   apt:
     update_cache: yes
+  ignore_errors: true
 
 - name: "upgrade packages"
   become: true
   apt:
     upgrade: yes
+  
 
 - name: "remove dependecies that are no longer required"
   become: true
