@@ -60,12 +60,12 @@ jobs:
       - image: alpine:latest
     steps:
       - run: apk add --update curl
-      - run: 
+      - run:
           name: smoke test
           command: |
-            URL= "https://blog.udacity.com/"
-            # Test if webist exists
-            if curl -s --head ${URL}
+            URL="https://blog.udacity.com/"
+            # Test if website exists
+            if curl -s --head ${URL} 
             then
               return 0
             else
