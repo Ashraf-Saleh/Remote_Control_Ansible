@@ -18,6 +18,7 @@ jobs:
   #        name: "Say hello"
   #        command: "echo Hello, World!"
 
+
   create_infrastructure:
     docker:
       - image: amazon/aws-cli
@@ -30,6 +31,29 @@ jobs:
               --template-file template.yml \
               --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
               --region us-west-2
+      - run:
+          name: copy the DNS from server to inventory
+          command: |
+            aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:Project,Values=Udacity" \
+              --output text >> inventory
+
+  configure_infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["8a:63:1b:b0:22:7c:e8:19:29:85:97:ad:91:6e:90:19"]
+      - run:
+          name: Install Ansible
+          command: apk add --update ansible
+
+      - run:
+          name: Run Playbook and Configure server
+          command: ansible-playbook -i Inventory main-remote.yml
+
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
@@ -38,3 +62,6 @@ workflows:
     jobs:
       #- say-hello
       - create_infrastructure
+      - configure_infrastructure:
+          request:
+            - create_infrastructure
