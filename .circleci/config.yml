@@ -63,5 +63,5 @@ workflows:
       #- say-hello
       - create_infrastructure
       - configure_infrastructure:
-          request:
+          requires:
             - create_infrastructure
