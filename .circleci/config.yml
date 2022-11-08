@@ -170,5 +170,5 @@ workflows:
       - get_last_deployment_id
       - clean_up_old_front_end:
           requires:
-            - get_lat_deployment_id
+            - get_last_deployment_id
             - promote_to_production
